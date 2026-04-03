@@ -1,0 +1,6 @@
+/home/norbhin/Projects/TARI-EMS/TARI_EMS-backend/src/main/java/com/ems/admin/repository/EventRepository.java
+/home/norbhin/Projects/TARI-EMS/TARI_EMS-backend/src/main/java/com/ems/admin/model/Event.java
+/home/norbhin/Projects/TARI-EMS/TARI_EMS-backend/src/main/java/com/ems/admin/service/EventService.java
+/home/norbhin/Projects/TARI-EMS/TARI_EMS-backend/src/main/java/com/ems/admin/controller/EventController.java
+/home/norbhin/Projects/TARI-EMS/TARI_EMS-backend/src/main/java/com/ems/controller/TestController.java
+/home/norbhin/Projects/TARI-EMS/TARI_EMS-backend/src/main/java/com/ems/EmsApplication.java
