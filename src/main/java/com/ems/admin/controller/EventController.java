@@ -3,6 +3,12 @@ package com.ems.admin.controller;
 import com.ems.admin.model.Event;
 import com.ems.admin.service.EventService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 
 import java.util.List;
@@ -46,4 +52,28 @@ public class EventController {
         return "Deleted succesfully";
     }
 
+   @PostMapping("/upload")
+public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+
+    try {
+        String uploadDir = "/home/tari01/upload/";
+
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+        Path path = Paths.get(uploadDir + filename);
+
+        Files.createDirectories(path.getParent());
+        Files.write(path, file.getBytes());
+
+        String imageUrl = "https://41.59.225.78:8443/uploads/" + filename;
+
+        return ResponseEntity.ok(imageUrl);
+
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+    }
 }
+}
+
+
+
