@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/admin/registrations") 
-@CrossOrigin(origins = "https://events.tari.go.tz/")
+// @CrossOrigin(origins = "https://events.tari.go.tz/")
 public class EventRegistrationController {
 
     private final EventRegistrationService service;

@@ -15,10 +15,10 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
 
-                registry.addMapping("/**")
-                        .allowedOrigins("https://events.tari.go.tz/")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*");
+                // registry.addMapping("/**")
+                //         .allowedOrigins("https://events.tari.go.tz/")
+                //         .allowedMethods("GET", "POST", "PUT", "DELETE","OPTIONS")
+                //         .allowedHeaders("*");
             }
         };
     }
