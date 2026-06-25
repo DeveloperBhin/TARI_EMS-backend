@@ -36,15 +36,33 @@ public class EventRegistrationService {
         EventRegistration existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Registration not found"));
 
-        // 🔁 update fields
-        existing.setFullname(updatedData.getFullname());
-        existing.setPhone(updatedData.getPhone());
-        existing.setEmail(updatedData.getEmail());
-        existing.setAge(updatedData.getAge());
-        existing.setShirtSize(updatedData.getShirtSize());
-        existing.setRaceType(updatedData.getRaceType());
-        existing.setLocation(updatedData.getLocation());
-        existing.setProofOfPayment(updatedData.getProofOfPayment());
+        // // 🔁 update fields
+        // existing.setFullname(updatedData.getFullname());
+        // existing.setPhone(updatedData.getPhone());
+        // existing.setEmail(updatedData.getEmail());
+        // existing.setAge(updatedData.getAge());
+        // existing.setShirtSize(updatedData.getShirtSize());
+        // existing.setRaceType(updatedData.getRaceType());
+        // existing.setLocation(updatedData.getLocation());
+        // existing.setProofOfPayment(updatedData.getProofOfPayment());
+        // existing.setStatus(updatedData.getStatus());
+
+existing.setFullname(updatedData.getFullname());
+ existing.setPhone(updatedData.getPhone());
+  existing.setEmail(updatedData.getEmail()); 
+  existing.setAge(updatedData.getAge()); 
+  existing.setYearOfBirth(updatedData.getYearOfBirth());
+   existing.setCountry(updatedData.getCountry()); 
+   existing.setRegion(updatedData.getRegion()); 
+   existing.setGender(updatedData.getGender()); 
+   existing.setShirtSize(updatedData.getShirtSize());
+    existing.setRaceType(updatedData.getRaceType()); 
+    existing.setPickupLocation(updatedData.getPickupLocation()); 
+    existing.setGroupName(updatedData.getGroupName()); 
+    existing.setIdType(updatedData.getIdType());
+     existing.setIdNumber(updatedData.getIdNumber());
+
+        existing.setProofOfPayment(updatedData.getProofOfPayment()); 
         existing.setStatus(updatedData.getStatus());
 
         return repository.save(existing);

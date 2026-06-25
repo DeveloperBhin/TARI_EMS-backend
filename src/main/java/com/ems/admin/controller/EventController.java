@@ -65,8 +65,7 @@ public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile fi
         Files.createDirectories(path.getParent());
         Files.write(path, file.getBytes());
 
-        String imageUrl = "https://41.59.225.78:8443/uploads/" + filename;
-
+        String imageUrl = "https://events.tari.go.tz/upload/" + filename;
         return ResponseEntity.ok(imageUrl);
 
     } catch (Exception e) {
