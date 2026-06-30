@@ -1,138 +1,85 @@
 package com.ems.admin.controller;
 
-import com.ems.admin.model.Event;
+import com.ems.admin.dto.requests.EventRegistrationRequest;
+import com.ems.admin.dto.response.EventRegistrationResponse;
+import com.ems.admin.mapper.EventRegistrationMapper;
 import com.ems.admin.model.EventRegistration;
 import com.ems.admin.service.EventRegistrationService;
-import com.ems.admin.service.EventService;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.*;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/admin/registrations")
+@RequestMapping("/api/admin/registrations")
 public class EventRegistrationController {
 
     private final EventRegistrationService service;
-    private final EventService eventService;
 
-    public EventRegistrationController(
-            EventRegistrationService service,
-            EventService eventService
-    ) {
+    // SERVER UPLOAD DIRECTORY
+    private static final String UPLOAD_DIR = "/home/tari01/upload/";
+
+    public EventRegistrationController(EventRegistrationService service) {
         this.service = service;
-        this.eventService = eventService;
     }
 
     // =========================
-    // CREATE REGISTRATION + FILE
+    // CREATE REGISTRATION
     // =========================
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public EventRegistration create(
-            @RequestParam Long eventId,
-            @RequestParam String fullname,
-            @RequestParam String phone,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) String yearOfBirth,
-            @RequestParam(required = false) String country,
-            @RequestParam(required = false) String region,
-            @RequestParam(required = false) String gender,
-            @RequestParam(required = false) String shirtSize,
-            @RequestParam(required = false) String raceType,
-            @RequestParam(required = false) String pickupLocation,
-            @RequestParam(required = false) String groupName,
-            @RequestParam(required = false) String idType,
-            @RequestParam(required = false) String idNumber,
-            @RequestParam(required = false) Double donationAmount,
-            @RequestParam(required = false) String registrationType,
-            @RequestParam MultipartFile proofOfPayment
-    ) throws IOException {
+    @PostMapping
+    public EventRegistrationResponse create(@RequestBody EventRegistrationRequest request) {
 
-        Event event = eventService.getEventById(eventId);
+        System.out.println("Event ID = " + request.getEventId());
+        System.out.println("Request = " + request);
 
-        // =========================
-        // FILE UPLOAD
-        // =========================
-        String uploadDir = "upload/proofs/";
-        Path uploadPath = Paths.get(uploadDir);
-
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        if (request.getEventId() == null) {
+            throw new IllegalArgumentException("eventId is required");
         }
 
-        String fileName = System.currentTimeMillis()
-                + "_" + proofOfPayment.getOriginalFilename();
+        EventRegistration saved = service.create(request);
 
-        Path filePath = uploadPath.resolve(fileName);
-
-        Files.copy(
-                proofOfPayment.getInputStream(),
-                filePath,
-                StandardCopyOption.REPLACE_EXISTING
-        );
-
-        String fileUrl = "https://events.tari.go.tz/upload/proofs/" + fileName;
-
-        // =========================
-        // BUILD ENTITY
-        // =========================
-        EventRegistration reg = new EventRegistration();
-
-        reg.setEvent(event);
-        reg.setFullname(fullname);
-        reg.setPhone(phone);
-        reg.setEmail(email);
-
-        reg.setYearOfBirth(yearOfBirth);
-        reg.setCountry(country);
-        reg.setRegion(region);
-        reg.setGender(gender);
-
-        reg.setShirtSize(shirtSize);
-        reg.setRaceType(raceType);
-        reg.setPickupLocation(pickupLocation);
-        reg.setGroupName(groupName);
-
-        reg.setIdType(idType);
-        reg.setIdNumber(idNumber);
-
-        reg.setDonationAmount(donationAmount);
-        reg.setRegistrationType(registrationType);
-
-        reg.setProofOfPayment(fileUrl);
-        reg.setStatus(EventRegistration.Status.PENDING);
-
-        return service.createEventRegistration(reg);
+        return EventRegistrationMapper.toResponse(saved);
     }
 
     // =========================
     // GET ALL
     // =========================
     @GetMapping
-    public List<EventRegistration> getAll() {
-        return service.getAllEventRegistrations();
+    public List<EventRegistrationResponse> getAll() {
+
+        return service.getAllEventRegistrations()
+                .stream()
+                .map(EventRegistrationMapper::toResponse)
+                .toList();
     }
 
     // =========================
     // GET BY ID
     // =========================
     @GetMapping("/{id}")
-    public EventRegistration getById(@PathVariable Long id) {
-        return service.getEventRegistrationById(id);
+    public EventRegistrationResponse getById(@PathVariable Long id) {
+
+        return EventRegistrationMapper.toResponse(
+                service.getEventRegistrationById(id)
+        );
     }
 
     // =========================
     // UPDATE
     // =========================
     @PutMapping("/{id}")
-    public EventRegistration update(
+    public EventRegistrationResponse update(
             @PathVariable Long id,
-            @RequestBody EventRegistration reg
+            @RequestBody EventRegistrationRequest request
     ) {
-        return service.updateEventRegistration(id, reg);
+
+        EventRegistration updated = service.update(id, request);
+
+        return EventRegistrationMapper.toResponse(updated);
     }
 
     // =========================
@@ -140,34 +87,48 @@ public class EventRegistrationController {
     // =========================
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
+
         service.deleteEventRegistration(id);
         return "Deleted successfully";
     }
 
     // =========================
-    // OPTIONAL: STANDALONE UPLOAD
+    // FILE UPLOAD (NEW PART)
     // =========================
     @PostMapping("/upload")
-    public String uploadProof(@RequestParam("file") MultipartFile file) throws IOException {
+    public String uploadFile(@RequestParam("file") MultipartFile file) {
+    System.out.println("🔥 UPLOAD ENDPOINT HIT");
+    System.out.println("File present = " + (file != null));
+System.out.println("File name = " + file.getOriginalFilename());
+System.out.println("File size = " + file.getSize());
+    
+        try {
+            if (file.isEmpty()) {
+                throw new RuntimeException("File is empty");
+            }
 
-        String uploadDir = "upload/proofs/";
-        Path uploadPath = Paths.get(uploadDir);
+            // create folder if not exists
+            File dir = new File(UPLOAD_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
 
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+            // unique file name
+            String fileName =
+                    System.currentTimeMillis() + "_" + file.getOriginalFilename();
+
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+
+            Files.write(path, file.getBytes());
+
+            // public URL (frontend uses this)
+            String fileUrl =
+                    "https://events.tari.go.tz/uploads/" + fileName;
+
+            return fileUrl;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Upload failed: " + e.getMessage());
         }
-
-        String fileName = System.currentTimeMillis()
-                + "_" + file.getOriginalFilename();
-
-        Path filePath = uploadPath.resolve(fileName);
-
-        Files.copy(
-                file.getInputStream(),
-                filePath,
-                StandardCopyOption.REPLACE_EXISTING
-        );
-
-        return "https://events.tari.go.tz/upload/proofs/" + fileName;
     }
 }

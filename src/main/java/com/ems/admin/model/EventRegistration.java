@@ -1,52 +1,88 @@
 package com.ems.admin.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Email;
 
 @Entity
+@Table(name = "event_registration")
 public class EventRegistration {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
-@ManyToOne
-@JoinColumn(name = "event_id", nullable = false)
-private Event event;
-@NotBlank(message = "Full name is required")
-private String fullname;
-@Pattern(
-regexp = "^[0-9+\\-\\s]{9,15}$",
-message = "Invalid phone number"
-)
-private String phone;
-@Email(message = "Invalid email")
-private String email;
-// Personal Information
-private String age;
-private String yearOfBirth;
-private String country;
-private String region;
-private String gender;
-// Event Information
-private String shirtSize;
-private String raceType;
-private String pickupLocation;
-private String groupName;
-// Identification
-private String idType;
-private String idNumber;
-// Payment
-private String proofOfPayment;
-@Enumerated(EnumType.STRING)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
+    private Event event;
+
+    // =========================
+    // BASIC INFO
+    // =========================
+    private String fullname;
+    private String phone;
+    private String email;
+
+    // =========================
+    // PERSONAL INFO
+    // =========================
+    private String age;
+    private String country;
+    private String region;
+    private String gender;
+
+    // =========================
+    // EVENT INFO
+    // =========================
+    @Column(name = "shirt_size")
+    private String shirtSize;
+
+    @Column(name = "race_type")
+    private String raceType;
+
+    @Column(name = "group_name")
+    private String groupName;
+
+    // =========================
+    // PICKUP LOCATION
+    // =========================
+    @Column(name = "pickup_location")
+    private String pickupLocation;
+
+    // =========================
+    // IDENTIFICATION
+    // =========================
+    @Column(name = "id_type")
+    private String idType;
+
+    @Column(name = "id_number")
+    private String idNumber;
+
+    // =========================
+    // COMPANION INFO
+    // =========================
+    @Column(name = "fellowname")   // IMPORTANT FIX
+    private String fellowName;
+
+    @Column(name = "fellowphone")  // IMPORTANT FIX
+    private String fellowPhone;
+
+    // =========================
+    // PAYMENT
+    // =========================
+    @Column(name = "proof_of_payment")
+    private String proofOfPayment;
+
+    // =========================
+    // STATUS
+    // =========================
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public enum Status {
-PENDING,
-COMPLETED,
-FAILED,
-REJECTED
-}
+        PENDING,
+        COMPLETED,
+        FAILED,
+        REJECTED
+    }
 
     // Getters & Setters
 
@@ -138,13 +174,7 @@ public void setEvent(Event event) {
     this.event = event;
 }
 
-public String getYearOfBirth() {
-    return yearOfBirth;
-}
 
-public void setYearOfBirth(String yearOfBirth) {
-    this.yearOfBirth = yearOfBirth;
-}
 
 public String getCountry() {
     return country;
@@ -195,14 +225,24 @@ public void setGroupName(String groupName) {
         this.idNumber = idNumber;
     }
 
-    public void setDonationAmount(Double donationAmount) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setDonationAmount'");
+      public String getFellowName() {
+        return fellowName;
     }
 
-    public void setRegistrationType(String registrationType) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setRegistrationType'");
+    public void setFellowName(String fellowName) {
+        this.fellowName = fellowName;
     }
+
+    public String getFellowPhone() {
+        return fellowPhone;
+    }
+
+    public void setFellowPhone(String fellowPhone) {
+        this.fellowPhone = fellowPhone;
+    }
+
+    
+
+    
 
 }

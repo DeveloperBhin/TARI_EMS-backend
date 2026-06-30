@@ -73,6 +73,3 @@ public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile fi
     }
 }
 }
-
-
-

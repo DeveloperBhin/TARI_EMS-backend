@@ -4,7 +4,11 @@
 <!-- docker build -t ems-backend . 
 docker stop ems-backend
 docker rm ems-backend
-docker run -d -p 8080:8080 --name ems-backend ems-backend -->
+docker run -d -p 8080:8080 --name ems-backend ems-backend 
+
+http://41.59.225.78:8080/uploads/1782566926140_DOC-20260627-WA0023..pdf
+
+-->
 <!-- docker exec -it postgres_catalogue_portal_db psql -U postgres 
 /data/.catalogue/portal-backend-service/src/main/java/tz/go/tari/portal_backend/service
 docker build -t tcbms-portal-backend-service .

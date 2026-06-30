@@ -1,8 +1,11 @@
+com/ems/admin/dto/requests/EventRegistrationRequest.class
 com/ems/EmsApplication.class
 com/ems/admin/repository/EventRepository.class
 com/ems/admin/model/EventRegistration.class
 com/ems/admin/controller/EventRegistrationController.class
+com/ems/admin/dto/response/EventRegistrationResponse.class
 com/ems/admin/service/EventService.class
+com/ems/admin/mapper/EventRegistrationMapper.class
 com/ems/admin/config/WebConfig.class
 com/ems/admin/service/EventRegistrationService.class
 com/ems/admin/repository/EventRegistrationRepository.class
